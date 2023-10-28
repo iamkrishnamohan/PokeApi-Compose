@@ -2,6 +2,7 @@ package com.krrish.pokeapicompose.di
 
 import com.krrish.pokeapicompose.data.remote.PokeAPI
 import com.krrish.pokeapicompose.repository.PokemonRepositoryImpl
+import com.krrish.pokeapicompose.util.Constants.API_BASE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,7 @@ object AppModule {
     fun providePokeApi(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.API_BASE)
+            .baseUrl(API_BASE)
             .client(client)
             .build()
     }
