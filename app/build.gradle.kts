@@ -63,31 +63,26 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // Retrofit
-    // https://square.github.io/retrofit/
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:okhttp:4.11.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     // Coroutine Lifecycle Scopes
-    // https://developer.android.com/topic/libraries/architecture/coroutines#lifecyclescope
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     // Compose
-    // https://developer.android.com/jetpack/compose
-    implementation ("androidx.compose.material:material:1.5.4")
     implementation ("androidx.navigation:navigation-compose:2.7.4") // Needed for hilt navigation
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.26.5-rc")
 
     //Dagger - Hilt
-    // https://developer.android.com/training/dependency-injection/hilt-android
     implementation ("com.google.dagger:hilt-android:2.48.1")
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.palette:palette-ktx:1.0.0")
     kapt ("com.google.dagger:hilt-compiler:2.48.1")
 
-    // Images - Coil (More lightweight than Glide, More modern than Picasso)
-    // https://coil-kt.github.io/coil/
+    // Images - Coil
     implementation ("io.coil-kt:coil-compose:2.2.2")
 
     implementation("androidx.test:core:1.5.0")

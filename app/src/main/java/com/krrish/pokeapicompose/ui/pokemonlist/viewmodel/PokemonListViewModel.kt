@@ -1,8 +1,13 @@
 package com.krrish.pokeapicompose.ui.pokemonlist.viewmodel
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.palette.graphics.Palette
 import com.krrish.pokeapicompose.data.models.PokedexListEntry
 import com.krrish.pokeapicompose.data.remote.response.Result
 import com.krrish.pokeapicompose.repository.PokemonRepositoryImpl
@@ -128,6 +133,16 @@ class PokemonListViewModel @Inject constructor(
             entry.url.dropLast(1).takeLastWhile { it.isDigit() }
         } else {
             entry.url.takeLastWhile { it.isDigit() }
+        }
+    }
+
+    fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
+        val bmp = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        Palette.from(bmp).generate { palette ->
+            palette?.dominantSwatch?.rgb?.let { colorValue ->
+                onFinish(Color(colorValue))
+            }
         }
     }
 }
