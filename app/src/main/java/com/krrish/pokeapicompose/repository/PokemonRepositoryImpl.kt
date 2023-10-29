@@ -4,10 +4,10 @@ import com.krrish.pokeapicompose.data.remote.PokeAPI
 import com.krrish.pokeapicompose.data.remote.response.Pokemon
 import com.krrish.pokeapicompose.data.remote.response.PokemonList
 import com.krrish.pokeapicompose.util.Resource
-import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
-@AndroidEntryPoint
+@ActivityScoped
 class PokemonRepositoryImpl @Inject constructor(
     private val api: PokeAPI
 ): PokemonRepository {
@@ -29,5 +29,4 @@ class PokemonRepositoryImpl @Inject constructor(
         }
         return Resource.Success(response)
     }
-
 }
