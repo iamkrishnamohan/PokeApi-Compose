@@ -1,6 +1,10 @@
 package com.krrish.pokeapicompose.util
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.compose.ui.graphics.Color
+import androidx.palette.graphics.Palette
 import com.krrish.pokeapicompose.data.remote.response.Stat
 import com.krrish.pokeapicompose.data.remote.response.Type
 import com.krrish.pokeapicompose.ui.theme.AtkColor
@@ -27,7 +31,7 @@ import com.krrish.pokeapicompose.ui.theme.TypePsychic
 import com.krrish.pokeapicompose.ui.theme.TypeRock
 import com.krrish.pokeapicompose.ui.theme.TypeSteel
 import com.krrish.pokeapicompose.ui.theme.TypeWater
-import java.util.*
+import java.util.Locale
 
 fun parseTypeToColor(type: Type): Color {
     return when (type.type.name.lowercase(Locale.ROOT)) {
@@ -74,5 +78,24 @@ fun parseStatToAbbr(stat: Stat): String {
         "special-defense" -> "Sp.Def"
         "speed" -> "Spd"
         else -> ""
+    }
+}
+
+
+
+fun String.extractId() = this.substringAfter("pokemon").replace("/", "").toInt()
+
+fun String.getImageUrl(): String {
+    val id = this.extractId()
+    return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png"
+}
+
+fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
+    val bmp = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+    Palette.from(bmp).generate { palette ->
+        palette?.dominantSwatch?.rgb?.let { colorValue ->
+            onFinish(Color(colorValue))
+        }
     }
 }

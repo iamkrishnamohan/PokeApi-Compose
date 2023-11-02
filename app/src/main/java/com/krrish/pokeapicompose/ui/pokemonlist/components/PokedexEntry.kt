@@ -27,21 +27,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.krrish.pokeapicompose.data.models.PokedexListEntry
-import com.krrish.pokeapicompose.ui.pokemonlist.viewmodel.PokemonListViewModel
 import com.krrish.pokeapicompose.ui.theme.Roboto
 import com.krrish.pokeapicompose.util.Screens
+import com.krrish.pokeapicompose.util.calcDominantColor
 
 @Composable
 fun PokedexEntry(
     entry: PokedexListEntry,
     navController: NavController,
-    modifier: Modifier = Modifier,
-    viewModel: PokemonListViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
 
     val defaultDominantColor = MaterialTheme.colorScheme.surface
@@ -78,7 +76,7 @@ fun PokedexEntry(
                     .build(),
                 contentDescription = entry.pokemonName,
                 onSuccess = {
-                    viewModel.calcDominantColor(it.result.drawable) { color ->
+                    calcDominantColor(it.result.drawable) { color ->
                         dominantColor = color
                     }
                 },

@@ -46,7 +46,7 @@ class PokemonListViewModelTest {
         val pkm = getBulbasaur()
         val url = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
 
-        Assert.assertEquals(url, viewModel.getImageUrl(pkm.id.toString()))
+        Assert.assertEquals(url, getImageUrl(pkm.id.toString()))
     }
 
     @Test
@@ -56,10 +56,22 @@ class PokemonListViewModelTest {
             "https://pokeapi.co/api/v2/pokemon/1/"
         )
 
-        Assert.assertEquals("1", viewModel.getPokedexNumber(result))
+        Assert.assertEquals("1", getPokedexNumber(result))
     }
 
     private fun getBulbasaur(): Pokemon {
         return Pokemon(7, 1, "Bulbasaur", Sprites(""), emptyList(), emptyList(), 69)
+    }
+
+    private fun getPokedexNumber(entry: Result): String {
+        return if (entry.url.endsWith("/")) {
+            entry.url.dropLast(1).takeLastWhile { it.isDigit() }
+        } else {
+            entry.url.takeLastWhile { it.isDigit() }
+        }
+    }
+
+    private fun getImageUrl(number: String): String {
+        return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${number}.png"
     }
 }

@@ -25,12 +25,12 @@ fun PokemonList(
     navController: NavController,
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
-    val pokemonList by remember { viewModel.pokemonList }
-    val endReached by remember { viewModel.endReached }
-    val loadError by remember { viewModel.loadError }
-    val isLoading by remember { viewModel.isLoading }
-    val isSearching by remember { viewModel.isSearching }
-    val isRefreshing by remember { viewModel.isRefreshing }
+    val pokemonList by remember { viewModel.returnPokemonList }
+    val endReached by remember { viewModel.returnEndReached }
+    val loadError by remember { viewModel.returnLoadError }
+    val isLoading by remember { viewModel.returnIsLoading }
+    val isSearching by remember { viewModel.returnIsSearching }
+    val isRefreshing by remember { viewModel.returnIsRefreshing }
 
     // Like RecyclerView but in Compose
 
