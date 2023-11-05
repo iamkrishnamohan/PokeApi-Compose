@@ -1,7 +1,6 @@
 package com.krrish.pokeapicompose.di
 
 import com.krrish.pokeapicompose.data.remote.PokeAPI
-import com.krrish.pokeapicompose.repository.PokemonRepositoryImpl
 import com.krrish.pokeapicompose.util.Constants.API_BASE
 import dagger.Module
 import dagger.Provides
@@ -17,11 +16,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Singleton
-    @Provides
-    fun providePokemonRepository(
-        api: PokeAPI
-    ) = PokemonRepositoryImpl(api)
+
 
     @Singleton
     @Provides

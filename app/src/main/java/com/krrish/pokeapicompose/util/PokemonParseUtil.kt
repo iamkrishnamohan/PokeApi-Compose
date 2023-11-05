@@ -81,15 +81,6 @@ fun parseStatToAbbr(stat: Stat): String {
     }
 }
 
-
-
-fun String.extractId() = this.substringAfter("pokemon").replace("/", "").toInt()
-
-fun String.getImageUrl(): String {
-    val id = this.extractId()
-    return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png"
-}
-
 fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
     val bmp = (drawable as BitmapDrawable).bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
@@ -99,3 +90,4 @@ fun calcDominantColor(drawable: Drawable, onFinish: (Color) -> Unit) {
         }
     }
 }
+

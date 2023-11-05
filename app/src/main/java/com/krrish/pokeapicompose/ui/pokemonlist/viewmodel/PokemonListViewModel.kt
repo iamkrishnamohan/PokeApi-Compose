@@ -119,9 +119,7 @@ class PokemonListViewModel @Inject constructor(
                     isLoading.value = false
                 }
 
-                is Resource.Loading -> {
-
-                }
+                is Resource.Loading -> Unit
             }
         }
     }
