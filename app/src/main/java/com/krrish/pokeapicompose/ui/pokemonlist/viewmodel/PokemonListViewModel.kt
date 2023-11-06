@@ -1,6 +1,5 @@
 package com.krrish.pokeapicompose.ui.pokemonlist.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.krrish.pokeapicompose.data.models.PokedexListEntry
@@ -11,8 +10,18 @@ import com.krrish.pokeapicompose.util.Constants.PAGE_SIZE
 import com.krrish.pokeapicompose.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class PokemonListState(
+    val pokemonList: List<PokedexListEntry> = emptyList(),
+    val loadError: String = "",
+    val isLoading: Boolean = false, val endReached: Boolean = false,
+    val isRefreshing: Boolean = false, val isSearching: Boolean = false
+)
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
@@ -21,23 +30,8 @@ class PokemonListViewModel @Inject constructor(
 
     private var currentPage = 0
 
-    private var pokemonList = mutableStateOf<List<PokedexListEntry>>(listOf())
-    val returnPokemonList = pokemonList
-
-    private var loadError = mutableStateOf("")
-    val returnLoadError = loadError
-
-    private var isLoading = mutableStateOf(false)
-    val returnIsLoading = isLoading
-
-    private var endReached = mutableStateOf(false)
-    val returnEndReached = endReached
-
-    private var isRefreshing = mutableStateOf(false)
-    val returnIsRefreshing = isRefreshing
-
-    private var isSearching = mutableStateOf(false)
-    val returnIsSearching = isSearching
+    private val _uiState = MutableStateFlow(PokemonListState())
+    val uiState: Flow<PokemonListState> = _uiState
 
     private var isSearchStarting = true
 
@@ -48,15 +42,20 @@ class PokemonListViewModel @Inject constructor(
     }
 
     fun refresh() {
-        isRefreshing.value = true
+        _uiState.update {
+            it.copy(isRefreshing = true)
+        }
         currentPage = 0 // Reset page
         loadPokemonList(true)
     }
 
     fun searchPokemonList(query: String) {
-        val listToSearch = when {
+        when {
             isSearchStarting -> {
-                pokemonList.value
+                _uiState.update {
+                    it.copy(pokemonList = _uiState.value.pokemonList)
+                }
+
             }
 
             else -> {
@@ -64,11 +63,13 @@ class PokemonListViewModel @Inject constructor(
                 cachedPokemonList
             }
         }
+        val listToSearch = _uiState.value.pokemonList
         viewModelScope.launch(Dispatchers.Default) {
             when {
                 query.isEmpty() -> {
-                    pokemonList.value = cachedPokemonList
-                    isSearching.value = false
+                    _uiState.update {
+                        it.copy(pokemonList = cachedPokemonList, isSearching = false)
+                    }
                     isSearchStarting = true
                     return@launch
                 }
@@ -78,13 +79,16 @@ class PokemonListViewModel @Inject constructor(
                     val results = searchPokedexListEntries(listToSearch, query)
 
                     if (isSearchStarting) {
-                        cachedPokemonList = pokemonList.value
+                        _uiState.update {
+                            it.copy(pokemonList = cachedPokemonList)
+                        }
                         isSearchStarting = false
                     }
 
                     // Update entries with the results
-                    pokemonList.value = results
-                    isSearching.value = true
+                    _uiState.update {
+                        it.copy(pokemonList = results, isSearching = true)
+                    }
                 }
             }
         }
@@ -93,30 +97,43 @@ class PokemonListViewModel @Inject constructor(
 
     fun loadPokemonList(fromRefresh: Boolean = false) {
         viewModelScope.launch {
-            isLoading.value = true
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
             when (val result = repository.getPokemonList(PAGE_SIZE, currentPage * PAGE_SIZE)) {
                 is Resource.Success -> {
                     when {
                         result.data != null -> {
-                            endReached.value = currentPage * PAGE_SIZE >= result.data.count
+                            _uiState.update {
+                                it.copy(endReached = currentPage * PAGE_SIZE >= result.data.count)
+                            }
                             val pokedexEntries = pokedexListEntries(result.data)
                             currentPage++
 
                             if (fromRefresh) {
-                                pokemonList.value = pokedexEntries
-                                isRefreshing.value = false
+                                _uiState.update {
+                                    it.copy(pokemonList = pokedexEntries, isRefreshing = false)
+                                }
                             } else {
-                                pokemonList.value += pokedexEntries
+                                _uiState.update {
+                                    it.copy(pokemonList = pokedexEntries)
+                                }
                             }
                         }
                     }
-                    loadError.value = ""
-                    isLoading.value = false
+                    _uiState.update {
+                        it.copy(
+                            loadError = "", isLoading = false
+                        )
+                    }
                 }
 
                 is Resource.Error -> {
-                    loadError.value = result.message!!
-                    isLoading.value = false
+                    _uiState.update {
+                        it.copy(
+                            loadError = result.message!!, isLoading = false
+                        )
+                    }
                 }
 
                 is Resource.Loading -> Unit
@@ -124,4 +141,5 @@ class PokemonListViewModel @Inject constructor(
         }
     }
 }
+
 

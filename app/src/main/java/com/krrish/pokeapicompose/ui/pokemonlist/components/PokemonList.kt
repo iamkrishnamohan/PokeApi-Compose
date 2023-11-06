@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.krrish.pokeapicompose.ui.pokemonlist.viewmodel.PokemonListState
 import com.krrish.pokeapicompose.ui.pokemonlist.viewmodel.PokemonListViewModel
 
 @Composable
@@ -25,30 +26,31 @@ fun PokemonList(
     navController: NavController,
     viewModel: PokemonListViewModel = hiltViewModel()
 ) {
-    val pokemonList by remember { viewModel.returnPokemonList }
-    val endReached by remember { viewModel.returnEndReached }
-    val loadError by remember { viewModel.returnLoadError }
-    val isLoading by remember { viewModel.returnIsLoading }
-    val isSearching by remember { viewModel.returnIsSearching }
-    val isRefreshing by remember { viewModel.returnIsRefreshing }
+
+    val pokemonListModel = viewModel.uiState.collectAsState(initial = PokemonListState())
 
     // Like RecyclerView but in Compose
-
-    SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isRefreshing), onRefresh = {
-        viewModel.refresh()
-    }) {
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = pokemonListModel.value.isRefreshing),
+        onRefresh = {
+            viewModel.refresh()
+        }) {
         LazyColumn(
             contentPadding = PaddingValues(16.dp)
         ) {
-            val itemCount = if (pokemonList.size % 2 == 0) {
-                pokemonList.size / 2
+            val itemCount = if (pokemonListModel.value.pokemonList.size % 2 == 0) {
+                pokemonListModel.value.pokemonList.size / 2
             } else {
-                pokemonList.size / 2 + 1
+                pokemonListModel.value.pokemonList.size / 2 + 1
             }
             items(itemCount) {
 
                 // Scroll down, load more Pokémons!
-                if (it >= itemCount - 1 && !endReached && !isLoading && !isSearching) {
+                if (it >= itemCount - 1
+                    && !pokemonListModel.value.endReached
+                    && !pokemonListModel.value.isLoading
+                    && !pokemonListModel.value.isSearching
+                ) {
                     LaunchedEffect(key1 = true) {
                         viewModel.loadPokemonList()
                     }
@@ -56,7 +58,7 @@ fun PokemonList(
 
                 PokedexRow(
                     rowIndex = it,
-                    entries = pokemonList,
+                    entries = pokemonListModel.value.pokemonList,
                     navController = navController
                 )
             }
@@ -69,16 +71,16 @@ fun PokemonList(
     ) {
         val showDialog = remember { mutableStateOf(false) }
 
-        if (isLoading) {
+        if (pokemonListModel.value.isLoading) {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
 
-        if (loadError.isNotEmpty()) {
+        if (pokemonListModel.value.loadError.isNotEmpty()) {
             showDialog.value = true
         }
 
         if (showDialog.value) {
-            DialogError(error = loadError, onRetry = {
+            DialogError(error = pokemonListModel.value.loadError, onRetry = {
                 viewModel.loadPokemonList()
             }, {
                 showDialog.value = it

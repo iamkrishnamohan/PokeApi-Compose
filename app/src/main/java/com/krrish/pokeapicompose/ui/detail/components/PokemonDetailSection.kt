@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.krrish.pokeapicompose.data.remote.response.Pokemon
-import java.util.Locale
+import com.krrish.pokeapicompose.util.replaceFirstCharacter
 
 @Composable
 fun PokemonDetailSection(
@@ -40,7 +40,7 @@ fun PokemonDetailSection(
         Text(
             text = "#${pokemonDetail.id} ${
                 pokemonDetail.name.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+                    it.replaceFirstCharacter()
                 }
             }",
             fontWeight = FontWeight.Bold,
