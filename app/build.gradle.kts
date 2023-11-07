@@ -53,7 +53,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.8.10")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
@@ -73,19 +73,19 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     // Compose
-    implementation ("androidx.navigation:navigation-compose:2.7.4") // Needed for hilt navigation
+    implementation ("androidx.navigation:navigation-compose:2.7.5") // Needed for hilt navigation
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.26.5-rc")
 
     //Dagger - Hilt
     implementation ("com.google.dagger:hilt-android:2.48.1")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.palette:palette-ktx:1.0.0")
     kapt ("com.google.dagger:hilt-compiler:2.48.1")
 
     // Images - Coil
     implementation ("io.coil-kt:coil-compose:2.2.2")
-
     implementation("androidx.test:core:1.5.0")
+    implementation("com.squareup.okhttp3:mockwebserver:4.11.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
